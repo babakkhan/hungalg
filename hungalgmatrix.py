@@ -5,15 +5,16 @@ class solver:
     def __init__(self, matrix):
         self.mat = copy.deepcopy(matrix)
         self.flipped = False
-        
-        # create 2 nxn matrices
-        self.zeroes = [[0 for y in range(0, len(self.mat))]
-                          for x in range(0, len(self.mat))]
-        self.lines = copy.deepcopy(self.zeroes)
 
         # prepare the output list
         self.output = [0 for x in range(0, len(self.mat))]
         self.inuse = [False for x in range(0, len(self.mat))]
+
+    def maxsum(self):
+        for x in range(0, len(self.mat)):
+            for y in range(0, len(self.mat)):
+                self.mat[x][y] = -self.mat[x][y]
+        return self.minsum()
 
     def minsum(self):
         # reduce rows and columns 
@@ -23,6 +24,10 @@ class solver:
         self.transpose() # and transpose back
         
         while(True):
+            # create 2 nxn matrices
+            self.zeroes = [[0 for y in range(0, len(self.mat))]
+                              for x in range(0, len(self.mat))]
+            self.lines = copy.deepcopy(self.zeroes)
 
             # loop through the zeroes matrix, and for each element
             # that is zero, scan horizontally and vertically for
@@ -34,12 +39,12 @@ class solver:
                     else:
                         self.zeroes[x][y] = 0
                         
-            print()
-            print("Reduced matrix")
-            self.printmatrix(self.mat, 3)
-            print()
-            print("Zeroes matrix")
-            self.printmatrix(self.zeroes, 2)
+            #print()
+            #print("Reduced matrix")
+            #self.printmatrix(self.mat, 3)
+            #print()
+            #print("Zeroes matrix")
+            #self.printmatrix(self.zeroes, 2)
 
             # reset lines counter
             lines = 0
@@ -61,11 +66,11 @@ class solver:
                                 self.zeroes[x][i] = 0
                             self.lines[x][i] += 1
 
-            print()
-            print("Lines matrix")
-            self.printmatrix(self.lines, 2)
-            print()
-            print(str(lines)+" lines")
+            #print()
+            #print("Lines matrix")
+            #self.printmatrix(self.lines, 2)
+            #print()
+            #print(str(lines)+" lines")
 
             # If we covered all elements (by using as many lines as there are rows),
             # we are done. Otherwise, more reduction is necessary.
