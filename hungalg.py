@@ -31,13 +31,11 @@ matrix = [  [  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 16
 
 # Create a solver object for the matrix
 solver = hungalgmatrix.solver(matrix)
-solution = solver.minsum()
+solution = solver.maxsum()
 
 s = 0
-s2 = 0
 for x in range(0, len(solution)):
-    s += matrix[x][solution[x]]
-    s2 += matrix[solution[x]][x]
+    s += matrix[solution[x]][x]
     
 print(s)
-print(s2)
+print(solution)

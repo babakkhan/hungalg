@@ -11,9 +11,15 @@ class solver:
         self.inuse = [False for x in range(0, len(self.mat))]
 
     def maxsum(self):
+        maxvalue = 0
         for x in range(0, len(self.mat)):
             for y in range(0, len(self.mat)):
-                self.mat[x][y] = -self.mat[x][y]
+                maxvalue = max(self.mat[x][y], maxvalue)
+                
+        for x in range(0, len(self.mat)):
+            for y in range(0, len(self.mat)):
+                self.mat[x][y] = - self.mat[x][y]
+                
         return self.minsum()
 
     def minsum(self):
@@ -21,82 +27,89 @@ class solver:
         self.rowreduce()
         self.transpose()
         self.rowreduce() # after transposing this reduces the columns
-        self.transpose() # and transpose back
         
         while(True):
-            # create 2 nxn matrices
-            self.zeroes = [[0 for y in range(0, len(self.mat))]
-                              for x in range(0, len(self.mat))]
-            self.lines = copy.deepcopy(self.zeroes)
-
-            # loop through the zeroes matrix, and for each element
-            # that is zero, scan horizontally and vertically for
-            # more zeroes and save the result
+            # create 2 lists holding the no of zeroes per row/column
+            zerosinrow = [0 for i in range(0, len(self.mat))]
+            zerosincol = [0 for i in range(0, len(self.mat))]
             for x in range(0, len(self.mat)):
                 for y in range(0, len(self.mat)):
                     if(self.mat[x][y] == 0):
-                        self.zeroes[x][y] = self.dirmax(x, y)
-                    else:
-                        self.zeroes[x][y] = 0
+                        zerosinrow[x] += 1
+                        zerosincol[y] += 1
                         
-            #print()
-            #print("Reduced matrix")
-            #self.printmatrix(self.mat, 3)
-            #print()
-            #print("Zeroes matrix")
-            #self.printmatrix(self.zeroes, 2)
+            # create a matrix signifying where a line is running
+            lines = [[0 for x in range(0, len(self.mat))] for y in range(0, len(self.mat))]
+            linesno = 0
+                    
+            lastdir = -1
 
-            # reset lines counter
-            lines = 0
+            while(self.zerosleft(zerosinrow, zerosincol)):
+                linesno += 1
+                
+                maxzeros = -1
+                lindex = 0
+                neworient = 1
+                
+                for i in range(0, len(self.mat)):
+                    if(zerosinrow[i] > maxzeros or (zerosinrow[i] == maxzeros and lastdir == 0)):
+                        lindex = i
+                        neworient = 1
+                        maxzeros = zerosinrow[i]
 
-            # todo: comment
-            for x in range(0, len(self.mat)):
-                for y in range(0, len(self.mat)):
-                    # clear according to sign
-                    if(self.zeroes[x][y] > 0):
-                        lines += 1
-                        for i in range(0, len(self.mat)):
-                            if(self.zeroes[i][y] > 0):
-                                self.zeroes[i][y] = 0
-                            self.lines[i][y] += 1
-                    elif(self.zeroes[x][y] < 0):
-                        lines += 1
-                        for i in range(0, len(self.mat)):
-                            if(self.zeroes[x][i] < 0):
-                                self.zeroes[x][i] = 0
-                            self.lines[x][i] += 1
+                for j in range(0, len(self.mat)):
+                    if(zerosincol[j] > maxzeros or (zerosincol[j] == maxzeros and lastdir == 1)):
+                        lindex = j
+                        neworient = 0
+                        maxzeros = zerosincol[j]
 
-            #print()
-            #print("Lines matrix")
-            #self.printmatrix(self.lines, 2)
-            #print()
-            #print(str(lines)+" lines")
+                if(neworient == 1):
+                    for i in range(0, len(self.mat)):
+                        if(self.mat[lindex][i] == 0):
+                            zerosincol[i] -= 1
+                            zerosinrow[lindex] -= 1
+                        lines[lindex][i] += 1
+                else:
+                    for i in range(0, len(self.mat)):
+                        if(self.mat[i][lindex] == 0):
+                            zerosinrow[i] -= 1
+                            zerosincol[lindex] -= 1
+                        lines[i][lindex] += 1
 
-            # If we covered all elements (by using as many lines as there are rows),
-            # we are done. Otherwise, more reduction is necessary.
-            if(lines >= len(self.mat)):
-                break
+                lastdir = neworient
 
-            # loop through the matrix to find the lowest, non-struck value
+            # if we needed as many lines as there are rows, are done
+            if(linesno >= len(self.mat)):
+                if(self.findpermutation(0)):
+                    break
+            
+            # else, reduce the matrix once more
             minvalue,found = 0,False
             for x in range(0, len(self.mat)):
                 for y in range(0, len(self.mat)):
-                    if(self.lines[x][y] == 0):
-                        minvalue = (self.mat[x][y] if ((minvalue > self.mat[x][y]) or not found) else minvalue)
+                    if(lines[x][y] == 0):
+                        minvalue = (min(minvalue,self.mat[x][y]) if found else self.mat[x][y])
                         found = True
 
-            print("lowest: "+str(minvalue))
-
-            # loop through the matrix one more time
+            # one more loop, subtract min from unmarked, add to double marked
             for x in range(0, len(self.mat)):
                 for y in range(0, len(self.mat)):
-                    if(self.lines[x][y] == 0):
+                    if(lines[x][y] == 0):
                         self.mat[x][y] -= minvalue
-                    elif(self.lines[x][y] == 2):
+                    elif(lines[x][y] >= 2):
                         self.mat[x][y] += minvalue
 
+            #self.printmatrix(self.mat,4)
+            #self.printmatrix(lines,1)
+
         # Find the optimal permutation
-        self.findpermutation(0)
+        print()
+        print()
+        print()
+        print("Reduced matrix")
+        self.printmatrix(self.mat, 3)
+        print()
+        print()
         return self.output
         
         #end of minsum()
@@ -114,6 +127,15 @@ class solver:
                 if(self.findpermutation(row + 1)):
                     return True
                 self.inuse[i] = False
+        return False
+
+    def zerosleft(self, row, col):
+        for x in row:
+            if (x > 0):         # was !=
+                return True
+        for y in col:
+            if (y > 0):
+                return True
         return False
     
     # Reduces rows individually.
@@ -134,14 +156,6 @@ class solver:
         for x in range(0, len(self.mat)):
             for y in range(x + 1, len(self.mat)):
                 self.mat[x][y], self.mat[y][x] = self.mat[y][x], self.mat[x][y]
-
-    # todo: comment
-    def dirmax(self, row, column):
-        h,v = 0,0
-        for i in range(0, len(self.mat)):
-            v += (self.mat[i][column] == 0)
-            h += (self.mat[row][i] == 0)
-        return (-h if (h > v) else v)
     
     # print the matrix
     # (useful for debugging)
