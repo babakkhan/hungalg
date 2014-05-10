@@ -6,10 +6,11 @@ class solver:
         self.mat = copy.deepcopy(matrix)
         self.flipped = False
         
-        # create 2 nxn matrices of booleans
+        # create 2 nxn matrices
+        self.zeroes = [[0 for y in range(0, len(self.mat))]
+                          for x in range(0, len(self.mat))]
         self.lines = [[False for y in range(0, len(self.mat))]
                              for x in range(0, len(self.mat))]
-        self.assignement = copy.deepcopy(self.lines)
 
     def minsum(self):
                 
@@ -20,7 +21,24 @@ class solver:
             self.rowreduce() # after transposing this reduces the columns
             self.transpose() # and transpose back
 
-            #
+            # loop through the zeroes matrix, and for each element
+            # that is zero, scan horizontally and vertically for
+            # more zeroes and save the result
+            for x in range(0, len(self.mat)):
+                for y in range(0, len(self.mat)):
+                    if(self.mat[x][y] == 0):
+                        self.zeroes[x][y] = self.dirmax(x, y)
+
+            # todo: comment
+            
+            
+
+            print()
+            print("Reduced matrix")
+            self.printmatrix(self.zeroes, 2)
+            print()
+            print("Zeroes matrix")
+            self.printmatrix(self.mat, 3)
             
     
     # Reduces rows individually.
@@ -44,15 +62,15 @@ class solver:
 
     # todo: comment
     def dirmax(self, row, column):
-        r = 0
+        h,v = 0,0
         for i in range(0, len(self.mat)):
-            r += (self.mat[i][column] == 0)
-            r -= (self.mat[row][i] == 0)
-        return r
+            v += (self.mat[i][column] == 0)
+            h += (self.mat[row][i] == 0)
+        return (-h if (h > v) else v)
     
     # print the matrix
     # (useful for debugging)
-    def printmatrix(self, offset):    
-        for row in self.mat:
+    def printmatrix(self, toprint, offset):    
+        for row in toprint:
             formatted = [str(element).rjust(offset) for element in row]
             print(" ".join(formatted))
