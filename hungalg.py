@@ -2,6 +2,10 @@
 import hungalgmatrix
 
 # the matrix to be solved
+"""
+matrix = [ [ 1, 3, 3],
+           [ 3, 2, 3],
+           [ 3, 3, 2]]"""
 matrix = [  [  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 169, 583],
             [627, 343, 773, 959, 943, 767, 473, 103, 699, 303, 957, 703, 583, 639, 913],
             [447, 283, 463,  29,  23, 487, 463, 993, 119, 883, 327, 493, 423, 159, 743],
@@ -20,10 +24,4 @@ matrix = [  [  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 16
 
 # Create a solver object for the matrix
 solver = hungalgmatrix.solver(matrix)
-
-solver.rowreduce()
-solver.transpose()
-solver.rowreduce()
-solver.printmatrix(3)
-
-print(matrix)
+solver.minsum()
