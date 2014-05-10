@@ -18,7 +18,7 @@ class solver:
                 
         for x in range(0, len(self.mat)):
             for y in range(0, len(self.mat)):
-                self.mat[x][y] = - self.mat[x][y]
+                self.mat[x][y] = maxvalue - self.mat[x][y]
                 
         return self.minsum()
 
@@ -78,7 +78,7 @@ class solver:
 
                 lastdir = neworient
 
-            # if we needed as many lines as there are rows, are done
+            # see if we found a good permutation yet
             if(linesno >= len(self.mat)):
                 if(self.findpermutation(0)):
                     break
@@ -99,17 +99,7 @@ class solver:
                     elif(lines[x][y] >= 2):
                         self.mat[x][y] += minvalue
 
-            #self.printmatrix(self.mat,4)
-            #self.printmatrix(lines,1)
-
-        # Find the optimal permutation
-        print()
-        print()
-        print()
-        print("Reduced matrix")
-        self.printmatrix(self.mat, 3)
-        print()
-        print()
+        # Return the result
         return self.output
         
         #end of minsum()
@@ -145,7 +135,7 @@ class solver:
             # find the minimum in the row
             minimum = min(element for element in row)
                     
-            #reduce each element in the row by the minimum
+            # reduce each element in the row by the minimum
             if(minimum != 0):
                 for i in range(0, len(row)):
                     row[i] -= minimum

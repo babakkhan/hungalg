@@ -1,18 +1,8 @@
 # hungalgmatrix contains all the matrix manipulation we need for the algorithm
 import hungalgmatrix
+from time import time
 
 # the matrix to be solved
-"""
-matrix = [ [ 1, 3, 3],
-           [ 3, 2, 3],
-           [ 3, 3, 2]]
-
-matrix = [[10,19,8,15,19],
-          [10,18,7,17,19],
-          [13,16,9,14,19],  
-          [12,19,8,18,19],
-          [14,17,10,19,19]]
-"""
 matrix = [  [  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 169, 583],
             [627, 343, 773, 959, 943, 767, 473, 103, 699, 303, 957, 703, 583, 639, 913],
             [447, 283, 463,  29,  23, 487, 463, 993, 119, 883, 327, 493, 423, 159, 743],
@@ -31,11 +21,14 @@ matrix = [  [  7,  53, 183, 439, 863, 497, 383, 563,  79, 973, 287,  63, 343, 16
 
 # Create a solver object for the matrix
 solver = hungalgmatrix.solver(matrix)
-solution = solver.maxsum()
 
-s = 0
-for x in range(0, len(solution)):
-    s += matrix[solution[x]][x]
-    
-print(s)
-print(solution)
+# solve!
+start = time()
+solution = solver.maxsum()
+end = time()
+
+# compile the answer
+answer = sum(matrix[solution[x]][x] for x in range(0, len(matrix)))
+
+print("Solution: " + str(answer))
+print("Found in " + str(end - start) + " ms.")
