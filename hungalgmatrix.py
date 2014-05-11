@@ -1,5 +1,7 @@
-# implements the hungarian algorithm
+# Written by Timon Knigge, 2014
+# Implements the Hungarian Algorithm.
 # http://en.wikipedia.org/wiki/Hungarian_algorithm
+
 import copy
 
 class solver:
@@ -9,8 +11,9 @@ class solver:
         self.flipped = False
 
         # prepare the output list
-        self.output = [0 for x in range(0, len(self.mat))]
-        self.inuse = [False for x in range(0, len(self.mat))]
+        self.output = [0] * len(self.mat)
+        self.inuse = [False] * len(self.mat)
+        
 
     def maxsum(self):
         # we can easily find the max sum by multiplying the matrix by -1,
@@ -19,6 +22,7 @@ class solver:
             for y in range(0, len(self.mat)):
                 self.mat[x][y] = -self.mat[x][y]                
         return self.minsum()
+    
 
     def minsum(self):
         # reduce rows and columns 
@@ -28,8 +32,8 @@ class solver:
         
         while(True):
             # create 2 lists holding the no of zeroes per row/column
-            zerosinrow = [0 for i in range(0, len(self.mat))]
-            zerosincol = [0 for i in range(0, len(self.mat))]
+            zerosinrow = [0] * len(self.mat)
+            zerosincol = [0] * len(self.mat)
             for x in range(0, len(self.mat)):
                 for y in range(0, len(self.mat)):
                     if(self.mat[x][y] == 0):
@@ -37,7 +41,7 @@ class solver:
                         zerosincol[y] += 1
             
             # create a matrix to track lines we draw over the main matrix
-            lines = [[0 for x in range(0, len(self.mat))] for y in range(0, len(self.mat))]
+            lines = [[0] * len(self.mat) for y in range(0, len(self.mat))]
             linesno = 0
             
             lastdir = -1    # whether our last line was vertical or horizontal (0 <=> v, 1 <=> h, -1 <=> not set)
@@ -104,6 +108,7 @@ class solver:
         # Return the result
         return self.output        
     #end of minsum()
+    
 
     # attempts to find a suitable permutation using the reduced matrix.
     # returns true if a permutation is found.
@@ -120,6 +125,7 @@ class solver:
                     return True                                 # successful branch
                 self.inuse[i] = False                           # no success in this branch
         return False
+    
 
     # whether there are still rows/columns that should be crossed out
     def zerosleft(self, row, col):
@@ -130,6 +136,7 @@ class solver:
             if (y > 0):
                 return True
         return False
+    
     
     # Reduces rows individually.
     # Note that this is *not* the same as conventional row reduction in linear algebra.
@@ -142,6 +149,7 @@ class solver:
             if(minimum != 0):
                 for i in range(0, len(row)):
                     row[i] -= minimum
+                    
     
     #transpose the matrix
     def transpose(self):
@@ -149,6 +157,7 @@ class solver:
         for x in range(0, len(self.mat)):
             for y in range(x + 1, len(self.mat)):
                 self.mat[x][y], self.mat[y][x] = self.mat[y][x], self.mat[x][y]
+                
     
     # print the matrix
     # (useful for debugging)
