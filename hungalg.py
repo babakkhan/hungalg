@@ -6,12 +6,20 @@ import copy
 SIMPLE, STARRED, PRIMED = 0, 1, 2
 
 
-def maximize(matrix):
-    pass
+def maximize(matrix, deepcopy=True):
+    if deepcopy:
+        matrix = copy.deepcopy(matrix)
+
+    m = max(max(row) for row in matrix)
+    for row in matrix:
+        row[:] = map(lambda x: m - x, row)
+
+    return minimize(matrix, False)
 
 
-def minimize(matrix):
-    matrix = copy.deepcopy(matrix)
+def minimize(matrix, deepcopy=True):
+    if deepcopy:
+        matrix = copy.deepcopy(matrix)
     n = len(matrix)
 
     # Step 1
@@ -76,7 +84,13 @@ def minimize(matrix):
 
         # end of step 3 while
 
-    return mask_matrix
+    # reconstruct the solution
+    solution = []
+    for r, row in enumerate(mask_matrix):
+        for c, val in enumerate(row):
+            if val == 1:
+                solution.append((r, c))
+    return solution
 
 
 def _cover_zeroes(matrix, mask_matrix, row_cover, col_cover):
@@ -142,10 +156,3 @@ def _find_prime_in_row(mask_matrix, r):
             return (r, c)
     else:
         return None
-
-
-print(minimize([[  7,  53, 183, 439, 863],
-             [497, 383, 563,  79, 973],
-             [287,  63, 343, 169, 583],
-             [627, 343, 773, 959, 943],
-             [767, 473, 103, 699, 303]]))
