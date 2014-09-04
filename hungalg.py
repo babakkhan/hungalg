@@ -132,7 +132,7 @@ def _find_noncovered_zero(matrix, row_cover, col_cover):
             if value == 0 and not row_cover[r] and not col_cover[c]:
                 return (r, c)
     else:
-        None
+        return None
 
 
 def _uncovered_values(matrix, row_cover, col_cover):
