@@ -4,5 +4,7 @@ A python implementation of [the Hungarian Algorithm](http://en.wikipedia.org/wik
 
 
 ### References
+
 [1] http://csclab.murraystate.edu/bob.pilgrim/445/munkres.html
+
 [2] http://en.wikipedia.org/wiki/Hungarian_algorithm
